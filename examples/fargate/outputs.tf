@@ -17,14 +17,84 @@ output "cluster_name" {
   value       = module.ecs_cluster.name
 }
 
+output "cloudwatch_log_group_name" {
+  description = "Name of CloudWatch log group created"
+  value       = module.ecs_cluster.cloudwatch_log_group_name
+}
+
+output "cloudwatch_log_group_arn" {
+  description = "ARN of CloudWatch log group created"
+  value       = module.ecs_cluster.cloudwatch_log_group_arn
+}
+
 output "cluster_capacity_providers" {
   description = "Map of cluster capacity providers attributes"
   value       = module.ecs_cluster.cluster_capacity_providers
 }
 
-output "cluster_autoscaling_capacity_providers" {
-  description = "Map of capacity providers created and their attributes"
-  value       = module.ecs_cluster.autoscaling_capacity_providers
+output "capacity_providers" {
+  description = "Map of autoscaling capacity providers created and their attributes"
+  value       = module.ecs_cluster.capacity_providers
+}
+
+output "task_exec_iam_role_name" {
+  description = "Task execution IAM role name"
+  value       = module.ecs_cluster.task_exec_iam_role_name
+}
+
+output "task_exec_iam_role_arn" {
+  description = "Task execution IAM role ARN"
+  value       = module.ecs_cluster.task_exec_iam_role_arn
+}
+
+output "task_exec_iam_role_unique_id" {
+  description = "Stable and unique string identifying the task execution IAM role"
+  value       = module.ecs_cluster.task_exec_iam_role_unique_id
+}
+
+output "infrastructure_iam_role_arn" {
+  description = "The Amazon Resource Name (ARN) specifying the IAM role"
+  value       = module.ecs_cluster.infrastructure_iam_role_arn
+}
+
+output "infrastructure_iam_role_name" {
+  description = "IAM role name"
+  value       = module.ecs_cluster.infrastructure_iam_role_name
+}
+
+output "infrastructure_iam_role_unique_id" {
+  description = "Stable and unique string identifying the IAM role"
+  value       = module.ecs_cluster.infrastructure_iam_role_unique_id
+}
+
+output "node_iam_role_arn" {
+  description = "The Amazon Resource Name (ARN) specifying the IAM role"
+  value       = module.ecs_cluster.node_iam_role_arn
+}
+
+output "node_iam_role_name" {
+  description = "IAM role name"
+  value       = module.ecs_cluster.node_iam_role_name
+}
+
+output "node_iam_role_unique_id" {
+  description = "Stable and unique string identifying the IAM role"
+  value       = module.ecs_cluster.node_iam_role_unique_id
+}
+
+output "node_iam_instance_profile_arn" {
+  description = "ARN assigned by AWS to the instance profile"
+  value       = module.ecs_cluster.node_iam_instance_profile_arn
+}
+
+output "node_iam_instance_profile_id" {
+  description = "Instance profile's ID"
+  value       = module.ecs_cluster.node_iam_instance_profile_id
+}
+
+output "node_iam_instance_profile_unique" {
+  description = "Stable and unique string identifying the IAM instance profile"
+  value       = module.ecs_cluster.node_iam_instance_profile_unique
 }
 
 ################################################################################
@@ -74,11 +144,6 @@ output "service_task_definition_revision" {
 output "service_task_definition_family" {
   description = "The unique name of the task definition"
   value       = module.ecs_service.task_definition_family
-}
-
-output "service_task_definition_family_revision" {
-  description = "The family and revision (family:revision) of the task definition"
-  value       = module.ecs_service.task_definition_family_revision
 }
 
 output "service_task_exec_iam_role_name" {
@@ -159,8 +224,17 @@ output "task_definition_run_task_command" {
   description = "awscli command to run the standalone task"
   value       = <<EOT
     aws ecs run-task --cluster ${module.ecs_cluster.name} \
-      --task-definition ${module.ecs_task_definition.task_definition_family_revision} \
+      --task-definition ${module.ecs_task_definition.task_definition_family}:${module.ecs_task_definition.task_definition_revision} \
       --network-configuration "awsvpcConfiguration={subnets=[${join(",", module.vpc.private_subnets)}],securityGroups=[${module.ecs_task_definition.security_group_id}]}" \
       --region ${local.region}
   EOT
+}
+
+################################################################################
+# Application Load Balancer
+################################################################################
+
+output "alb_dns_name" {
+  description = "The DNS name of the load balancer"
+  value       = module.alb.dns_name
 }
